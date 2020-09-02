@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 
-class DoneAppbar extends StatelessWidget {
-  final completedTasksLength;
+class DoneAppBar extends StatelessWidget {
+  final todosCompletedLength;
 
-  const DoneAppbar({Key key, @required this.completedTasksLength}) : super(key: key);
+  const DoneAppBar({Key key, @required this.todosCompletedLength}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return SliverAppBar(
       centerTitle: true,
-      title: Text('Tareas realizadas: $completedTasksLength 🥳'),
+      title: Text('Tareas realizadas: $todosCompletedLength 🥳'),
     );
   }
 }

@@ -18,9 +18,9 @@ class HomePage extends StatelessWidget {
               if (state is FetchedTodos)
                 return CustomScrollView(
                   slivers: [
-                    TodoAppBar(todosIncompleted: state.todosIncompleted.length),
+                    TodoAppBar(todosIncompletedLength: state.todosIncompleted.length),
                     SliverTodoItems(todos: state.todosIncompleted),
-                    DoneAppbar(completedTasksLength: state.todosDone.length),
+                    DoneAppBar(todosCompletedLength: state.todosDone.length),
                     SliverTodoItems(todos: state.todosDone),
                   ],
                 );
