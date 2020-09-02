@@ -1,0 +1,53 @@
+name: Test, Build and Release Android App
+
+on:
+  pull_request:
+    branches: 
+      - master
+jobs:
+  setup-android:
+    name: Set-up & test & android-apk
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        ref: develop
+    - uses: actions/setup-java@v1
+      with:
+        java-version: '12.x'
+    - uses: subosito/flutter-action@v1
+      with:
+        channel: 'stable'
+    - run: flutter pub get
+    - run: flutter test
+
+    - run: flutter build appbundle -t lib/main.dart
+        
+    - uses: actions/upload-artifact@v1
+      with:
+         name: release-android
+         path: build/app/outputs/bundle/release/app-release.aab
+    
+    - name: build apk for Firebase distribution
+      run: flutter build apk -t lib/main.dart
+      env:
+        KEY_PATH: key.jks
+        KEY_STORE_PASSWORD:  ${{ secrets.STORE_PASSWORD }}
+        KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        ALIAS: ${{ secrets.ALIAS }}
+  
+    - name: upload artifact to Firebase App Distribution
+      uses: wzieba/Firebase-Distribution-Github-Action@v1
+      with:
+          appId: ${{secrets.FIREBASE_APP_ID}}
+          token: ${{secrets.FIREBASE_TOKEN}}
+          groups: Test
+          file: build/app/outputs/apk/release/app-release.apk
+        
+    - uses: r0adkll/upload-google-play@v1
+      with:
+          serviceAccountJsonPlainText: ${{secrets.SERVICE_ACCOUNT_JSON}}
+          packageName: com.example.exampleApp
+          releaseFile: build/app/outputs/bundle/release/app-release.aab
+          mappingFile: build/app/outputs/mapping/prod/release/mapping.txt
+           
